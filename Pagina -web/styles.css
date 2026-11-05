@@ -1,0 +1,29 @@
+/* STREAMING_CHUNK:Configuring custom styles and scrollbars */
+body {
+font-family: 'Plus Jakarta Sans', sans-serif;
+background-color: #FAF2F2;
+color: #38060D;
+}
+
+.font-serif-title {
+font-family: 'Playfair Display', serif;
+}
+
+/* Scrollbars personalizados */
+::-webkit-scrollbar {
+width: 8px;
+}
+::-webkit-scrollbar-track {
+background: #FAF2F2;
+}
+::-webkit-scrollbar-thumb {
+background: #D9828B;
+border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+background: #70121E;
+}
+
+.product-card:hover .product-img {
+transform: scale(1.05);
+}

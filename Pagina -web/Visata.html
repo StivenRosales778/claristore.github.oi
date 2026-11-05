@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clarita Store | Moda, calidad y estilo</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'clarita-bg': '#FAF2F2',
+                        'clarita-card': '#F7E9E9',
+                        'clarita-pink': '#EBC2C4',
+                        'clarita-rose': '#D9828B',
+                        'clarita-wine': '#70121E',
+                        'clarita-dark': '#38060D',
+                        'clarita-maroon': '#8B1828',
+                        'clarita-accent': '#9E1C2E',
+                    },
+                    fontFamily: {
+                        serif: ['Playfair Display', 'serif'],
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Custom external stylesheet link -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-clarita-bg min-h-screen flex flex-col justify-between overflow-x-hidden">
+
+    <!-- Top Announcement Bar -->
+    <div class="bg-clarita-dark text-white text-xs sm:text-sm py-2 px-4 shadow-sm">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <i class="fa-solid fa-truck-fast text-clarita-pink text-xs"></i>
+                <span>Envíos a todo el país</span>
+            </div>
+            
+            <div class="hidden md:flex items-center space-x-1 italic text-clarita-pink">
+                <i class="fa-regular fa-heart text-xs"></i>
+                <span>Moda que te hace brillar</span>
+            </div>
+
+            <div class="flex items-center space-x-6">
+                <!-- Autenticación / Estado de Sesión -->
+                <div id="auth-status-bar" class="flex items-center gap-2 text-xs">
+                    <!-- Se llena dinámicamente con JS -->
+                </div>
+
+                <div class="flex items-center gap-2 text-clarita-pink text-xs hidden sm:flex">
+                    <i class="fa-solid fa-user-shield"></i>
+                    <span>Navegación segura</span>
+                </div>
+                <button onclick="toggleCart()" class="relative flex items-center hover:text-clarita-pink transition-colors cursor-pointer p-2">
+                    <i class="fa-solid fa-bag-shopping text-lg"></i>
+                    <span id="cart-count" class="pointer-events-none absolute top-0 right-0 bg-clarita-accent text-white text-[10px] font-bold rounded-full h-4 w-4 flex items-center justify-center">0</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation Header -->
+    <header class="sticky top-0 z-40 bg-clarita-bg/95 backdrop-blur-md border-b border-clarita-pink/30 shadow-xs">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-4">
+            
+            <!-- Mobile Menu Toggle -->
+            <button onclick="toggleMobileMenu()" class="lg:hidden text-clarita-wine text-2xl focus:outline-none cursor-pointer">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+
+            <!-- Brand Logo -->
+            <a href="#" class="flex items-center gap-2 group">
+                <div class="text-center">
+                    <div class="flex items-center justify-center gap-1">
+                        <i class="fa-solid fa-crown text-clarita-wine text-lg group-hover:rotate-12 transition-transform"></i>
+                        <h1 class="font-serif-title text-2xl sm:text-3xl font-bold text-clarita-wine tracking-wide">Clarita</h1>
+                        <i class="fa-regular fa-heart text-clarita-rose text-xs"></i>
+                    </div>
+                    <span class="text-[10px] uppercase tracking-[0.3em] text-clarita-dark block font-semibold -mt-1">STORE</span>
+                </div>
+            </a>
+
+            <!-- Desktop Menu Nav -->
+            <nav class="hidden lg:flex items-center space-x-8 font-medium text-sm text-clarita-dark">
+                <a href="#inicio" class="text-clarita-wine font-bold border-b-2 border-clarita-wine pb-0.5">Inicio</a>
+                <a href="#productos" onclick="filterByCategory('Ropa')" class="hover:text-clarita-wine transition-colors cursor-pointer">Ropa</a>
+                <a href="#productos" onclick="filterByCategory('Calzado')" class="hover:text-clarita-wine transition-colors cursor-pointer">Calzado</a>
+                <a href="#productos" onclick="filterByCategory('Accesorios')" class="hover:text-clarita-wine transition-colors cursor-pointer">Accesorios</a>
+                <a href="#contacto" class="hover:text-clarita-wine transition-colors">Contacto</a>
+            </nav>
+
+            <!-- Search Bar -->
+            <div class="relative w-36 sm:w-56 md:w-64">
+                <input type="text" id="search-input" onkeyup="handleSearch()" placeholder="Buscar productos..." 
+                    class="w-full pl-3 pr-8 py-1.5 text-xs sm:text-sm bg-white/80 border border-clarita-pink/60 rounded-full focus:outline-none focus:border-clarita-wine focus:ring-1 focus:ring-clarita-wine transition-all shadow-inner">
+                <button class="absolute right-2.5 top-1/2 -translate-y-1/2 text-clarita-rose hover:text-clarita-wine">
+                    <i class="fa-solid fa-magnifying-glass text-xs sm:text-sm"></i>
+                </button>
+            </div>
+
+        </div>
+
+        <!-- Mobile Menu Drawer -->
+        <div id="mobile-menu" class="hidden lg:hidden bg-clarita-bg border-b border-clarita-pink/40 px-6 py-4 space-y-3">
+            <a href="#inicio" onclick="toggleMobileMenu()" class="block text-clarita-wine font-bold py-1">Inicio</a>
+            <a href="#productos" onclick="filterByCategory('Ropa'); toggleMobileMenu()" class="block text-clarita-dark hover:text-clarita-wine py-1">Ropa</a>
+            <a href="#productos" onclick="filterByCategory('Calzado'); toggleMobileMenu()" class="block text-clarita-dark hover:text-clarita-wine py-1">Calzado</a>
+            <a href="#productos" onclick="filterByCategory('Accesorios'); toggleMobileMenu()" class="block text-clarita-dark hover:text-clarita-wine py-1">Accesorios</a>
+            <a href="#contacto" onclick="toggleMobileMenu()" class="block text-clarita-dark hover:text-clarita-wine py-1">Contacto</a>
+        </div>
+    </header>
+
+    <main class="flex-grow">
+        
+        <!-- Hero Banner Section -->
+        <section id="inicio" class="relative overflow-hidden bg-gradient-to-r from-[#FCE8E8] via-[#FAF2F2] to-[#F7DADE] py-8 sm:py-12 lg:py-16 px-4 sm:px-8 border-b border-clarita-pink/30">
+            <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
+                
+                <div class="md:col-span-5 space-y-4 text-center md:text-left z-10">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 bg-white/60 backdrop-blur-xs border border-clarita-rose/30 rounded-full text-clarita-wine text-xs font-medium">
+                        <i class="fa-regular fa-heart text-clarita-rose"></i>
+                        <span>Tu estilo, en un solo lugar</span>
+                    </div>
+                    
+                    <h2 class="font-serif-title text-4xl sm:text-5xl lg:text-6xl text-clarita-wine font-bold leading-tight">
+                        Clarita <br><span class="italic font-normal text-clarita-dark text-3xl sm:text-4xl lg:text-5xl">STORE</span>
+                    </h2>
+
+                    <div class="inline-block bg-clarita-wine text-white px-4 py-1.5 rounded-md text-sm sm:text-base font-semibold uppercase tracking-wider shadow-sm">
+                        Ropa, calzado y accesorios
+                    </div>
+
+                    <p class="text-clarita-dark/80 text-sm sm:text-base max-w-md mx-auto md:mx-0">
+                        Moda, calidad y los mejores estilos para cada ocasión. Descubre prendas pensadas especialmente para hacerte brillar.
+                    </p>
+
+                    <div class="pt-2 flex flex-wrap gap-3 justify-center md:justify-start">
+                        <a href="#productos" class="inline-flex items-center gap-3 bg-clarita-wine hover:bg-clarita-dark text-white px-8 py-3 rounded-full font-semibold shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5 group">
+                            <span>Ver colección</span>
+                            <i class="fa-solid fa-arrow-right text-xs group-hover:translate-x-1 transition-transform"></i>
+                        </a>
+                        <button onclick="openAuthModal('register')" class="inline-flex items-center gap-2 bg-white hover:bg-clarita-card text-clarita-wine border border-clarita-wine px-6 py-3 rounded-full font-semibold shadow transition-all cursor-pointer">
+                            <i class="fa-solid fa-user-plus text-xs"></i>
+                            <span>Registrarse</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="md:col-span-7 relative flex justify-center items-center">
+                    <div class="absolute -top-10 -right-10 w-72 h-72 bg-clarita-pink/40 rounded-full blur-3xl -z-10"></div>
+                    <div class="absolute -bottom-10 -left-10 w-64 h-64 bg-clarita-rose/20 rounded-full blur-2xl -z-10"></div>
+
+                    <div class="relative w-full max-w-2xl rounded-2xl overflow-hidden shadow-2xl border-4 border-white bg-white">
+                        <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=1200&auto=format&fit=crop" 
+                             alt="Clarita Store Banner Moda" 
+                             class="w-full h-[320px] sm:h-[420px] object-cover object-center">
+                        
+                        <div class="absolute bottom-4 right-4 bg-white/90 backdrop-blur-md p-4 rounded-xl shadow-lg border border-clarita-pink max-w-[200px] hidden sm:block">
+                            <p class="font-serif-title text-clarita-wine font-bold text-lg leading-none">Viste, Sueña, Brilla</p>
+                            <p class="text-[11px] text-gray-600 mt-1">Nuevas tendencias cada semana con envío directo a tu hogar.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Category Section -->
+        <section class="py-12 px-4 max-w-7xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                
+                <div onclick="filterByCategory('Ropa')" class="cursor-pointer bg-clarita-card/70 hover:bg-clarita-card border border-clarita-pink/40 rounded-2xl p-6 flex items-center space-x-4 transition-all duration-300 hover:shadow-md group">
+                    <div class="relative w-28 h-28 rounded-full overflow-hidden border-2 border-clarita-wine shrink-0 shadow-inner">
+                        <img src="https://images.unsplash.com/photo-1525507119028-ed4c629a60a3?q=80&w=400&auto=format&fit=crop" alt="Ropa" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                        <div class="absolute top-0 right-0 bg-clarita-wine text-white p-1 rounded-bl-lg text-xs">
+                            <i class="fa-solid fa-shirt"></i>
+                        </div>
+                    </div>
+                    <div class="flex-grow">
+                        <h3 class="font-serif-title text-xl font-bold text-clarita-wine">Ropa</h3>
+                        <p class="text-xs text-clarita-dark/70 mt-1">Estilo para cada ocasión</p>
+                        <span class="inline-flex items-center text-clarita-wine text-xs font-bold mt-3 group-hover:translate-x-1 transition-transform">
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </span>
+                    </div>
+                </div>
+
+                <div onclick="filterByCategory('Calzado')" class="cursor-pointer bg-clarita-card/70 hover:bg-clarita-card border border-clarita-pink/40 rounded-2xl p-6 flex items-center space-x-4 transition-all duration-300 hover:shadow-md group">
+                    <div class="relative w-28 h-28 rounded-full overflow-hidden border-2 border-clarita-wine shrink-0 shadow-inner">
+                        <img src="https://images.unsplash.com/photo-1543163521-1bf539c55dd2?q=80&w=400&auto=format&fit=crop" alt="Calzado" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                        <div class="absolute top-0 right-0 bg-clarita-wine text-white p-1 rounded-bl-lg text-xs">
+                            <i class="fa-solid fa-shoe-prints"></i>
+                        </div>
+                    </div>
+                    <div class="flex-grow">
+                        <h3 class="font-serif-title text-xl font-bold text-clarita-wine">Calzado</h3>
+                        <p class="text-xs text-clarita-dark/70 mt-1">Comodidad y estilo</p>
+                        <span class="inline-flex items-center text-clarita-wine text-xs font-bold mt-3 group-hover:translate-x-1 transition-transform">
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </span>
+                    </div>
+                </div>
+
+                <div onclick="filterByCategory('Accesorios')" class="cursor-pointer bg-clarita-card/70 hover:bg-clarita-card border border-clarita-pink/40 rounded-2xl p-6 flex items-center space-x-4 transition-all duration-300 hover:shadow-md group">
+                    <div class="relative w-28 h-28 rounded-full overflow-hidden border-2 border-clarita-wine shrink-0 shadow-inner">
+                        <img src="https://images.unsplash.com/photo-1584917865442-de89df76afd3?q=80&w=400&auto=format&fit=crop" alt="Accesorios" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                        <div class="absolute top-0 right-0 bg-clarita-wine text-white p-1 rounded-bl-lg text-xs">
+                            <i class="fa-solid fa-bag-shopping"></i>
+                        </div>
+                    </div>
+                    <div class="flex-grow">
+                        <h3 class="font-serif-title text-xl font-bold text-clarita-wine">Accesorios</h3>
+                        <p class="text-xs text-clarita-dark/70 mt-1">Detalles que hacen la diferencia</p>
+                        <span class="inline-flex items-center text-clarita-wine text-xs font-bold mt-3 group-hover:translate-x-1 transition-transform">
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </span>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Featured Products Section -->
+        <section id="productos" class="py-10 px-4 max-w-7xl mx-auto">
+            <div class="flex items-center justify-center space-x-4 mb-8">
+                <div class="h-px bg-clarita-pink flex-1 max-w-[150px]"></div>
+                <div class="flex items-center space-x-2">
+                    <h2 class="font-serif-title text-2xl sm:text-3xl font-bold text-clarita-wine text-center">Productos Destacados</h2>
+                    <i class="fa-regular fa-heart text-clarita-rose text-lg"></i>
+                </div>
+                <div class="h-px bg-clarita-pink flex-1 max-w-[150px]"></div>
+            </div>
+
+            <!-- Category Filter Buttons -->
+            <div class="flex justify-center flex-wrap gap-2 mb-8">
+                <button onclick="filterByCategory('Todos')" id="filter-todos" class="category-btn px-4 py-1.5 rounded-full text-xs font-semibold bg-clarita-wine text-white transition-all cursor-pointer">Todos</button>
+                <button onclick="filterByCategory('Ropa')" id="filter-ropa" class="category-btn px-4 py-1.5 rounded-full text-xs font-semibold bg-white text-clarita-dark border border-clarita-pink hover:bg-clarita-card transition-all cursor-pointer">Ropa</button>
+                <button onclick="filterByCategory('Calzado')" id="filter-calzado" class="category-btn px-4 py-1.5 rounded-full text-xs font-semibold bg-white text-clarita-dark border border-clarita-pink hover:bg-clarita-card transition-all cursor-pointer">Calzado</button>
+                <button onclick="filterByCategory('Accesorios')" id="filter-accesorios" class="category-btn px-4 py-1.5 rounded-full text-xs font-semibold bg-white text-clarita-dark border border-clarita-pink hover:bg-clarita-card transition-all cursor-pointer">Accesorios</button>
+            </div>
+
+            <!-- Products Grid -->
+            <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer id="contacto" class="bg-clarita-dark text-white pt-12 pb-6 border-t border-clarita-wine">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-10">
+                
+                <div class="space-y-3">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-crown text-clarita-pink text-xl"></i>
+                        <h3 class="font-serif-title text-2xl font-bold text-white">Clarita</h3>
+                        <i class="fa-regular fa-heart text-clarita-rose text-xs"></i>
+                    </div>
+                    <p class="text-xs text-clarita-pink/80 leading-relaxed">
+                        Ropa, calzado y accesorios para mujeres con estilo. Moda de calidad al alcance de un clic.
+                    </p>
+                </div>
+
+                <div>
+                    <h4 class="text-sm font-semibold text-clarita-pink uppercase tracking-wider mb-3">Enlaces rápidos</h4>
+                    <ul class="space-y-2 text-xs text-gray-300">
+                        <li><a href="#inicio" class="hover:text-clarita-pink transition-colors">Inicio</a></li>
+                        <li><a href="#productos" onclick="filterByCategory('Ropa')" class="hover:text-clarita-pink transition-colors">Ropa</a></li>
+                        <li><a href="#productos" onclick="filterByCategory('Calzado')" class="hover:text-clarita-pink transition-colors">Calzado</a></li>
+                        <li><a href="#productos" onclick="filterByCategory('Accesorios')" class="hover:text-clarita-pink transition-colors">Accesorios</a></li>
+                    </ul>
+                </div>
+
+                <div class="space-y-4">
+                    <div>
+                        <h4 class="text-sm font-semibold text-clarita-pink uppercase tracking-wider mb-2">Métodos de pago</h4>
+                        <div class="flex items-center space-x-2 text-2xl">
+                            <span class="bg-white text-blue-800 rounded px-2 py-0.5 text-xs font-bold">VISA</span>
+                            <span class="bg-white text-red-600 rounded px-2 py-0.5 text-xs font-bold">MasterCard</span>
+                            <span class="bg-white text-green-700 rounded px-2 py-0.5 text-xs font-bold">Efectivo</span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4 class="text-sm font-semibold text-clarita-pink uppercase tracking-wider mb-2">Síguenos</h4>
+                        <div class="flex space-x-3 text-lg">
+                            <a href="#" class="w-8 h-8 rounded-full bg-clarita-wine flex items-center justify-center hover:bg-clarita-rose transition-colors"><i class="fa-brands fa-facebook-f text-xs"></i></a>
+                            <a href="#" class="w-8 h-8 rounded-full bg-clarita-wine flex items-center justify-center hover:bg-clarita-rose transition-colors"><i class="fa-brands fa-instagram text-xs"></i></a>
+                            <a href="#" class="w-8 h-8 rounded-full bg-clarita-wine flex items-center justify-center hover:bg-clarita-rose transition-colors"><i class="fa-brands fa-tiktok text-xs"></i></a>
+                            <a href="https://wa.me/50558682458" target="_blank" class="w-8 h-8 rounded-full bg-clarita-wine flex items-center justify-center hover:bg-clarita-rose transition-colors"><i class="fa-brands fa-whatsapp text-xs"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="text-sm font-semibold text-clarita-pink uppercase tracking-wider mb-2">Suscríbete a nuestro boletín</h4>
+                    <p class="text-xs text-gray-300 mb-3">Recibe ofertas exclusivas y las últimas tendencias.</p>
+                    <form onsubmit="handleNewsletter(event)" class="flex gap-1">
+                        <input type="email" required placeholder="Tu correo electrónico" class="w-full px-3 py-1.5 text-xs bg-white/10 text-white rounded-l border border-clarita-rose/40 focus:outline-none focus:border-clarita-pink">
+                        <button type="submit" class="bg-clarita-accent hover:bg-clarita-rose text-white px-3 py-1.5 rounded-r text-xs transition-colors cursor-pointer">
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </form>
+                </div>
+
+            </div>
+
+            <div class="pt-6 border-t border-clarita-wine/50 text-center text-xs text-gray-400">
+                <p>&copy; 2026 Clarita Store. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Shopping Cart Drawer -->
+    <div id="cart-drawer" class="fixed inset-0 z-50 overflow-hidden hidden">
+        <div id="cart-backdrop" onclick="toggleCart()" class="absolute inset-0 bg-black/50 backdrop-blur-xs cursor-pointer"></div>
+
+        <div class="fixed inset-y-0 right-0 max-w-full flex pl-10">
+            <div class="w-screen max-w-md bg-clarita-bg shadow-2xl flex flex-col justify-between relative z-10">
+                
+                <!-- Cabecera -->
+                <div class="p-4 bg-clarita-dark text-white flex justify-between items-center">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-bag-shopping text-clarita-pink"></i>
+                        <h3 class="font-serif-title font-bold text-lg">Apartado de Pago y Envío</h3>
+                    </div>
+                    <button onclick="toggleCart()" class="text-clarita-pink hover:text-white p-1 cursor-pointer">
+                        <i class="fa-solid fa-xmark text-xl"></i>
+                    </button>
+                </div>
+
+                <!-- Contenido -->
+                <div id="cart-body-content" class="flex-grow overflow-y-auto p-4 space-y-4">
+                    <!-- Se llena dinámicamente con JS -->
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE REGISTRO / INICIO DE SESIÓN -->
+    <div id="auth-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs hidden">
+        <div class="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-md mx-4 relative border border-clarita-pink">
+            <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-gray-400 hover:text-clarita-wine text-xl cursor-pointer">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            
+            <div class="text-center mb-6">
+                <div class="inline-flex items-center justify-center w-12 h-12 bg-clarita-card text-clarita-wine rounded-full mb-2">
+                    <i id="auth-modal-icon" class="fa-solid fa-user-plus text-lg"></i>
+                </div>
+                <h3 id="auth-modal-title" class="font-serif-title text-2xl font-bold text-clarita-wine">Registrarse</h3>
+                <p id="auth-modal-subtitle" class="text-xs text-clarita-dark/70">Crea tu cuenta para guardar tus datos internamente</p>
+            </div>
+
+            <form id="auth-form" onsubmit="handleAuthSubmit(event)" class="space-y-4">
+                <div id="name-field-container">
+                    <label class="block text-xs font-semibold text-clarita-dark mb-1">Nombre Completo</label>
+                    <input type="text" id="auth-name" placeholder="Nombre y apellidos" class="w-full px-3 py-2 text-xs border border-clarita-pink rounded-lg focus:outline-none focus:border-clarita-wine">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-clarita-dark mb-1">Correo Electrónico</label>
+                    <input type="email" id="auth-email" required placeholder="Tu @correo.com" class="w-full px-3 py-2 text-xs border border-clarita-pink rounded-lg focus:outline-none focus:border-clarita-wine">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-clarita-dark mb-1">Contraseña</label>
+                    <input type="password" id="auth-password" required placeholder="********" class="w-full px-3 py-2 text-xs border border-clarita-pink rounded-lg focus:outline-none focus:border-clarita-wine">
+                </div>
+
+                <button type="submit" id="auth-submit-btn" class="w-full bg-clarita-wine hover:bg-clarita-dark text-white py-2.5 rounded-lg text-xs font-bold transition-colors cursor-pointer">
+                    Registrarse
+                </button>
+            </form>
+
+            <div class="mt-4 text-center text-xs text-clarita-dark">
+                <p id="auth-toggle-text">¿Ya tienes cuenta? <button type="button" onclick="switchAuthMode('login')" class="text-clarita-wine font-bold underline cursor-pointer">Inicia sesión</button></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="fixed bottom-5 right-5 z-50 bg-clarita-dark text-white text-xs px-4 py-3 rounded-xl shadow-lg border border-clarita-rose transform translate-y-20 opacity-0 transition-all duration-300 flex items-center gap-2 pointer-events-none">
+        <i class="fa-solid fa-circle-check text-clarita-pink"></i>
+        <span id="toast-message">Producto añadido al carrito</span>
+    </div>
+
+    <!-- JavaScript Link -->
+    <script src="script.js"></script>
+</body>
+</html>
